@@ -4,7 +4,8 @@
   "description": "API desenvolvida para o desafio final do bootcamp Explorer da Rcoketseat",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ./src/server.js"
+    "dev": "nodemon ./src/server.js",
+    "migrate": "knex migrate:latest"
   },
   "keywords": [],
   "author": "Victor Hugo Oliveira Pinheiro",

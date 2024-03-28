@@ -2,7 +2,7 @@ const { hash } = require('bcrypt');
 
 const AppError = require('../utils/AppError');
 
-const sqliteConnection = require('../datebase/sqlite');
+const sqliteConnection = require('../database/sqlite');
 
 class UsersController {
   async create(request, response) {
