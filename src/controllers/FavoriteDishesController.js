@@ -17,7 +17,7 @@ class FavoriteDishesController {
 
     await knex('favorite_dishes').where({ id }).delete();
 
-    response.json();
+    return response.json();
   }
 
   async index(request, response) {
