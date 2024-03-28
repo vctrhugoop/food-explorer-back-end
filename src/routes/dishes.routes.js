@@ -10,6 +10,8 @@ dishesRouter.post('/', dishesController.create);
 
 dishesRouter.get('/:id', dishesController.show);
 
+dishesRouter.get('/', dishesController.index);
+
 dishesRouter.delete('/:id', dishesController.delete);
 
 module.exports = dishesRouter;
