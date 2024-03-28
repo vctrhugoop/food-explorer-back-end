@@ -33,6 +33,8 @@ async function isAdmin(request, response, next) {
   if (user.role !== 'admin') {
     throw new AppError('Usuário não é um administrator', 401);
   }
+
+  return next();
 }
 
 module.exports = { ensureAuthenticated, isAdmin };
