@@ -2,12 +2,12 @@ exports.up = (knex) =>
   knex.schema.createTable('favorite_dishes', (table) => {
     table.increments('id');
     table
-      .integer('userId')
+      .integer('user_id')
       .references('id')
       .inTable('users')
       .onDelete('CASCADE');
     table
-      .integer('dishId')
+      .integer('dishe_id')
       .references('id')
       .inTable('dishes')
       .onDelete('CASCADE');
