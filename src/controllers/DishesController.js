@@ -44,9 +44,21 @@ class DishesController {
   }
 
   async index(request, response) {
-    const dishes = await knex('dishes').select('*');
+    const { search } = request.query;
 
-    response.json(dishes);
+    if (search === undefined) {
+      search = '';
+    }
+
+    const dishes = await knex('dishes')
+      .select('dishes.*')
+      .from('dishes')
+      .innerJoin('ingredients', 'dishes.id', '=', 'ingredients.dishe_id')
+      .whereLike('dishes.name', `%${search}%`)
+      .orWhereLike('ingredients.name', `%${search}%`)
+      .groupBy('dishes.name');
+
+    return response.json(dishes);
   }
 }
 
