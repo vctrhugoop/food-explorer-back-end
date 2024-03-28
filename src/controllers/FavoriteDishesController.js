@@ -22,7 +22,10 @@ class FavoriteDishesController {
 
   async index(request, response) {
     const { user_id } = request.query;
-    const favorite_dishes = await knex('favorite_dishes').where({ user_id });
+    const favorite_dishes = await knex('favorite_dishes')
+      .where({ user_id })
+      .select('dishes.*')
+      .innerJoin('dishes', 'favorite_dishes.dishe_id', '=', 'dishes.id');
 
     return response.json({ favorite_dishes });
   }
