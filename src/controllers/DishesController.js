@@ -1,4 +1,5 @@
 const knex = require('../database/knex');
+const DiskStorage = require('../providers/DisckStorage');
 
 class DishesController {
   async create(request, response) {
@@ -62,15 +63,30 @@ class DishesController {
   }
 
   async update(request, response) {
-    const { name, description, category, price, ingredients } = request.body;
+    const { name, description, category, price, image, ingredients } =
+      request.body;
     const { id } = request.params;
 
     const dishe = await knex('dishes').where({ id }).first();
+
+    let filename = '';
+
+    if (request.file && request.file.filename) {
+      const imageFilename = request.file.filename;
+      const diskStorage = new DiskStorage();
+
+      if (dishe && dishe.image) {
+        await diskStorage.deleteFile(dishe.image);
+      }
+
+      filename = await diskStorage.saveFile(imageFilename);
+    }
 
     dishe.name = name ?? dishe.name;
     dishe.description = description ?? dishe.description;
     dishe.category = category ?? dishe.category;
     dishe.price = price ?? dishe.price;
+    dishe.image = image ?? dishe.image;
 
     await knex('dishes').where({ id }).update(dishe);
     await knex('dishes').where({ id }).update('updatedAt', knex.fn.now());

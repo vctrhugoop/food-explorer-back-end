@@ -1,4 +1,6 @@
 const { Router } = require('express');
+const multer = require('multer');
+const uploadConfig = require('../config/upload');
 
 const DishesController = require('../controllers/DishesController');
 
@@ -9,11 +11,18 @@ const {
 
 const dishesRouter = Router();
 
+const upload = multer(uploadConfig.MULTER);
+
 const dishesController = new DishesController();
 
 dishesRouter.use(ensureAuthenticated);
 
-dishesRouter.post('/', isAdmin, dishesController.create);
+dishesRouter.post(
+  '/',
+  isAdmin,
+  upload.single('image'),
+  dishesController.create,
+);
 
 dishesRouter.get('/:id', dishesController.show);
 
@@ -21,6 +30,11 @@ dishesRouter.get('/', dishesController.index);
 
 dishesRouter.delete('/:id', isAdmin, dishesController.delete);
 
-dishesRouter.put('/:id', isAdmin, dishesController.update);
+dishesRouter.put(
+  '/:id',
+  isAdmin,
+  upload.single('image'),
+  dishesController.update,
+);
 
 module.exports = dishesRouter;
