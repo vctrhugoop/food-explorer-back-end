@@ -60,6 +60,46 @@ class DishesController {
 
     return response.json(dishes);
   }
+
+  async update(request, response) {
+    const { name, description, category, price, ingredients } = request.body;
+    const { id } = request.params;
+
+    const dishe = await knex('dishes').where({ id }).first();
+
+    dishe.name = name ?? dishe.name;
+    dishe.description = description ?? dishe.description;
+    dishe.category = category ?? dishe.category;
+    dishe.price = price ?? dishe.price;
+
+    await knex('dishes').where({ id }).update(dishe);
+    await knex('dishes').where({ id }).update('updatedAt', knex.fn.now());
+
+    const hasOnlyOneIngredient = typeof ingredients === 'string';
+
+    let ingredientsUpdated;
+
+    if (hasOnlyOneIngredient) {
+      ingredientsUpdated = {
+        dishe_id: dishe.id,
+        name: ingredients,
+      };
+    } else if (ingredients.length >= 1) {
+      ingredientsUpdated = ingredients.map((ingredient) => {
+        return {
+          dishe_id: dishe.id,
+          name: ingredient,
+        };
+      });
+
+      await knex('ingredients').where({ dishe_id: id }).delete();
+      await knex('ingredients')
+        .where({ dishe_id: id })
+        .insert(ingredientsUpdated);
+    }
+
+    return response.json();
+  }
 }
 
 module.exports = DishesController;

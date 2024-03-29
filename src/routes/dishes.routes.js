@@ -21,4 +21,6 @@ dishesRouter.get('/', dishesController.index);
 
 dishesRouter.delete('/:id', isAdmin, dishesController.delete);
 
+dishesRouter.put('/:id', isAdmin, dishesController.update);
+
 module.exports = dishesRouter;
