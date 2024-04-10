@@ -2,11 +2,11 @@ const knex = require('../database/knex');
 
 class FavoriteDishesController {
   async create(request, response) {
-    const { user_id, dishe_id } = request.body;
+    const { user_id, dish_id } = request.body;
 
     await knex('favorite_dishes').insert({
       user_id,
-      dishe_id,
+      dish_id,
     });
 
     return response.json();
@@ -25,7 +25,7 @@ class FavoriteDishesController {
     const favorite_dishes = await knex('favorite_dishes')
       .where({ user_id })
       .select('dishes.*')
-      .innerJoin('dishes', 'favorite_dishes.dishe_id', '=', 'dishes.id');
+      .innerJoin('dishes', 'favorite_dishes.dish_id', '=', 'dishes.id');
 
     return response.json({ favorite_dishes });
   }

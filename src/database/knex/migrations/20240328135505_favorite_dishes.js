@@ -7,7 +7,7 @@ exports.up = (knex) =>
       .inTable('users')
       .onDelete('CASCADE');
     table
-      .integer('dishe_id')
+      .integer('dish_id')
       .references('id')
       .inTable('dishes')
       .onDelete('CASCADE');
