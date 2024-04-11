@@ -1,15 +1,23 @@
 const knex = require('../database/knex');
+const AppError = require('../utils/AppError');
 const DiskStorage = require('../providers/DiskStorage');
 
 class DishesController {
   async create(request, response) {
     const { name, description, category, price, ingredients } = request.body;
 
+    const imageFileName = request.file.filename;
+
+    const diskStorage = new DiskStorage();
+
+    const filename = await diskStorage.saveFile(imageFileName);
+
     const [dish_id] = await knex('dishes').insert({
       name,
       description,
       price,
       category,
+      image: filename,
     });
 
     const ingredientsInsert = ingredients.map((ingredient) => {
@@ -67,26 +75,23 @@ class DishesController {
       request.body;
     const { id } = request.params;
 
+    const imageFileName = request.file.filename;
+
+    const diskStorage = new DiskStorage();
+
     const dish = await knex('dishes').where({ id }).first();
 
-    let filename = '';
-
-    if (request.file && request.file.filename) {
-      const imageFilename = request.file.filename;
-      const diskStorage = new DiskStorage();
-
-      if (dish && dish.image) {
-        await diskStorage.deleteFile(dish.image);
-      }
-
-      filename = await diskStorage.saveFile(imageFilename);
+    if (dish.image) {
+      await diskStorage.deleteFile(dish.image);
     }
+
+    const filename = await diskStorage.saveFile(imageFileName);
 
     dish.name = name ?? dish.name;
     dish.description = description ?? dish.description;
     dish.category = category ?? dish.category;
     dish.price = price ?? dish.price;
-    dish.image = image ?? dish.image;
+    dish.image = image ?? filename;
 
     await knex('dishes').where({ id }).update(dish);
     await knex('dishes').where({ id }).update('updatedAt', knex.fn.now());
